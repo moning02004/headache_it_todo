@@ -1,11 +1,11 @@
 package com.headacheIT.todoList.Services;
 
-import com.headacheIT.todoList.Models.ResponseModel;
 import com.headacheIT.todoList.Models.Todo;
 import com.headacheIT.todoList.Repositories.TodoRepository;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class TodoService {
@@ -18,5 +18,9 @@ public class TodoService {
 
     public Todo saveTodo(Todo todo) {
         return todoRepository.save(todo);
+    }
+
+    public Optional<Todo> getTodoById(int id) {
+        return todoRepository.findById(id);
     }
 }

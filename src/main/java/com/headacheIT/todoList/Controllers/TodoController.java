@@ -1,7 +1,9 @@
 package com.headacheIT.todoList.Controllers;
 
-import com.headacheIT.todoList.Models.*;
-import com.headacheIT.todoList.Services.HeadacheUserService;
+import com.headacheIT.todoList.Models.ResponseModel;
+import com.headacheIT.todoList.Models.Todo;
+import com.headacheIT.todoList.Models.TodoInfoResponse;
+import com.headacheIT.todoList.Models.TodoListResponse;
 import com.headacheIT.todoList.Services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ public class TodoController {
 
     // list todos
     @RequestMapping(value = "/todos", method = RequestMethod.GET)
-    public ResponseEntity<ResponseModel> getTodoInfo() {
+    public ResponseEntity<ResponseModel> getTodoList() {
         List<Todo> todo = (List<Todo>) todoService.getTodoList();
         TodoListResponse data = new TodoListResponse();
         data.setData(todo);
@@ -29,17 +31,24 @@ public class TodoController {
 
     // create todos
     @RequestMapping(value = "/todos", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> createTodoInfo(@RequestBody Todo form) {
+    public ResponseEntity<ResponseModel> createTodo(@RequestBody Todo form) {
+
         form.setRegisteredAt(LocalDateTime.now());
         form.setStatus(1);
         Todo todo = todoService.saveTodo(form);
 
-        TodoCreateResponse responseModel = new TodoCreateResponse();
-        responseModel.setTitle(todo.getTitle());
-        responseModel.setDescription(todo.getDescription());
-        responseModel.setRegisteredAt(todo.getRegisteredAt());
-        responseModel.setDueDate(todo.getDueDate());
-        responseModel.setUserId(todo.getUserId());
+        TodoInfoResponse responseModel = new TodoInfoResponse(todo);
         return ResponseEntity.ok(responseModel);
+    }
+
+    // get todo by id
+    @RequestMapping(value = "/todos/{id}", method = RequestMethod.GET)
+    public ResponseEntity<ResponseModel> getTodoInfo(@PathVariable int id) {
+        Optional<Todo> todo = todoService.getTodoById(id);
+        if (todo.isPresent()) {
+            TodoInfoResponse response = new TodoInfoResponse(todo.get());
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 }
