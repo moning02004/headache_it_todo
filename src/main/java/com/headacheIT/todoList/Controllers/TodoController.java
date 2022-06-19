@@ -32,7 +32,6 @@ public class TodoController {
     // create todos
     @RequestMapping(value = "/todos", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> createTodo(@RequestBody Todo form) {
-
         form.setRegisteredAt(LocalDateTime.now());
         form.setStatus(1);
         Todo todo = todoService.saveTodo(form);
@@ -47,6 +46,23 @@ public class TodoController {
         Optional<Todo> todo = todoService.getTodoById(id);
         if (todo.isPresent()) {
             TodoInfoResponse response = new TodoInfoResponse(todo.get());
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    // patch todo by id
+    @RequestMapping(value = "/todos/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<ResponseModel> updateTodoInfo(@PathVariable int id, @RequestBody Todo form) {
+        Optional<Todo> todo = todoService.getTodoById(id);
+        if (todo.isPresent()) {
+            if (form.getTitle() != null) todo.get().setTitle(form.getTitle());
+            if (form.getDescription() != null) todo.get().setDescription(form.getDescription());
+            if (form.getDueDate() != null) todo.get().setDueDate(form.getDueDate());
+            todo.get().setEditedAt(LocalDateTime.now());
+            Todo updatedTodo = todoService.saveTodo(todo.get());
+
+            TodoInfoResponse response = new TodoInfoResponse(updatedTodo);
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
