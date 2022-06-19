@@ -1,9 +1,6 @@
 package com.headacheIT.todoList.Controllers;
 
-import com.headacheIT.todoList.Models.HeadacheUser;
-import com.headacheIT.todoList.Models.ResponseModel;
-import com.headacheIT.todoList.Models.Todo;
-import com.headacheIT.todoList.Models.TodoListResponse;
+import com.headacheIT.todoList.Models.*;
 import com.headacheIT.todoList.Services.HeadacheUserService;
 import com.headacheIT.todoList.Services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +25,21 @@ public class TodoController {
         data.setData(todo);
         data.setCount(todo.size());
         return ResponseEntity.ok(data);
+    }
+
+    // create todos
+    @RequestMapping(value = "/todos", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> createTodoInfo(@RequestBody Todo form) {
+        form.setRegisteredAt(LocalDateTime.now());
+        form.setStatus(1);
+        Todo todo = todoService.saveTodo(form);
+
+        TodoCreateResponse responseModel = new TodoCreateResponse();
+        responseModel.setTitle(todo.getTitle());
+        responseModel.setDescription(todo.getDescription());
+        responseModel.setRegisteredAt(todo.getRegisteredAt());
+        responseModel.setDueDate(todo.getDueDate());
+        responseModel.setUserId(todo.getUserId());
+        return ResponseEntity.ok(responseModel);
     }
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "todo")
-public class Todo {
+public class Todo implements ResponseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,16 +22,16 @@ public class Todo {
     private String description;
 
     @Column(name = "due_date")
-    private String dueDate;
+    private LocalDateTime dueDate;
 
     @Column(name = "registered_at")
-    private String registeredAt;
+    private LocalDateTime registeredAt;
 
     @Column(name = "edited_at")
-    private String editedAt;
+    private LocalDateTime editedAt;
 
     @Column(name = "user_id")
-    private String userId;
+    private int userId;
 
-    private String status;
+    private int status;
 }
