@@ -13,6 +13,7 @@ public class TodoInfoResponse implements ResponseModel {
     private LocalDateTime dueDate;
     private LocalDateTime registeredAt;
     private LocalDateTime editedAt;
+    private int status;
 
     private int userId;
 
@@ -23,5 +24,6 @@ public class TodoInfoResponse implements ResponseModel {
         this.setRegisteredAt(todo.getRegisteredAt());
         this.setUserId(todo.getUserId());
         this.setEditedAt(todo.getEditedAt());
+        this.setStatus(todo.getStatus());
     }
 }

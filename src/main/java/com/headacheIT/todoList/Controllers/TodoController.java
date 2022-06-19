@@ -22,7 +22,7 @@ public class TodoController {
     // list todos
     @RequestMapping(value = "/todos", method = RequestMethod.GET)
     public ResponseEntity<ResponseModel> getTodoList() {
-        List<Todo> todo = (List<Todo>) todoService.getTodoList();
+        List<Todo> todo = todoService.getTodoList();
         TodoListResponse data = new TodoListResponse();
         data.setData(todo);
         data.setCount(todo.size());
@@ -66,5 +66,31 @@ public class TodoController {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    // Complete todo by id
+    @RequestMapping(value = "/todos/{id}/complete", method = RequestMethod.PATCH)
+    public ResponseEntity<ResponseModel> completeTodo(@PathVariable int id) {
+        Optional<Todo> todo = todoService.getTodoById(id);
+        if (todo.isPresent()) {
+            todo.get().setEditedAt(LocalDateTime.now());
+            todo.get().setStatus(2);
+            Todo updatedTodo = todoService.saveTodo(todo.get());
+
+            TodoInfoResponse response = new TodoInfoResponse(updatedTodo);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    // Delete todo by id
+    @RequestMapping(value = "/todos/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<ResponseModel> deleteTodo(@PathVariable int id) {
+        Optional<Todo> todo = todoService.getTodoById(id);
+        if (! todo.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        todoService.deleteTodoById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }
